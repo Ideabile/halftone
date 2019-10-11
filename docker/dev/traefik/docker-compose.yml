@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+
+  traefik:
+    image: traefik:latest
+    ports:
+      - 8080:8080
+      - 80:80
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.toml:/etc/traefik/traefik.toml
+    networks:
+      - web
+
+networks:
+  web:
+
+
+
+
+
+
+
+

@@ -1,0 +1,70 @@
+version: "3"
+
+services:
+    
+  dynamodb:
+    image: amazon/dynamodb-local
+    command: -jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data/
+    volumes:
+      - dynamodb_data:/home/dynamodblocal/data
+    environment:
+      - VIRTUAL_HOST=dynamodb.halftone.localhost
+      - VIRTUAL_PORT=8000
+
+  api:
+    image: node:10-alpine
+    volumes:
+      - ./../packages/api:/api
+      - node-modules-api:/api/node_modules
+    working_dir: /api
+    command: ['npm', 'run', 'start']
+
+  web:
+    image: node:10-alpine
+    volumes:
+      - ./..:/web
+      - node-modules-web:/web/node_modules
+    working_dir: /web
+    command: ['npm', 'run', 'dev']
+
+  # Proxy related stuff
+  # The host machine bridge
+  dockerhost:
+    image: alpine
+    entrypoint: /bin/sh -c "tail -f /dev/null"
+    network_mode: host
+  
+  # An autosetup discovery with env variables
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=HostRegexp:halftone.localhost,{subdomain:[a-z]+}.halftone.localhost"
+      - "traefik.frontend.entryPoints=http"
+      - "traefik.docker.network=infrastructure_proxy"
+      - "traefik.frontend.priority=1"
+
+  # The proxy for specific services
+  nginx:
+    image: nginx:1.13.11-alpine
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - ./nginx/sites-enabled:/etc/nginx/conf.d/sites-enabled
+      - ./nginx/html:/usr/share/nginx/html
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:dev.halftone.localhost"
+      - "traefik.frontend.entryPoints=http"
+      - "traefik.docker.network=infrastructure_proxy"
+      - "traefik.frontend.priority=2"
+    links: 
+      - dockerhost:dockerhost
+
+# Names our volume
+volumes:
+  dynamodb_data:
+  node-modules-api:
+  node-modules-lib:
+  node-modules-web:

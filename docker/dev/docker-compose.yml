@@ -1,0 +1,96 @@
+version: "3"
+
+services:
+    
+  dynamodb:
+    image: amazon/dynamodb-local
+    command: -jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data/
+    volumes:
+      - ../../.data/dynamodb:/home/dynamodblocal/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:dynamodb.halftone.localhost"
+      - "traefik.frontend.entryPoints=http"
+      - "traefik.docker.network=infrastructure_proxy"
+      - "traefik.frontend.priority=5"
+    networks:
+      - traefik_web
+
+  app:
+    image: node:10-alpine
+    volumes:
+      - ./../../packages/app:/app
+      - node-modules-app:/app/node_modules
+    working_dir: /app
+    command: ['npm', 'run', 'start']
+    networks:
+      - traefik_web
+
+  s3:
+    image: fingershock/fakes3
+    volumes:
+      - ./../../.data/s3:/opt/fakes3/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:s3.halftone.localhost"
+      - "traefik.frontend.entryPoints=http"
+      - "traefik.docker.network=infrastructure_proxy"
+      - "traefik.frontend.priority=3"
+    networks:
+      - traefik_web
+
+  api:
+    image: node:10-alpine
+    volumes:
+      - ./../../packages/api:/api
+      - node-modules-api:/api/node_modules
+    working_dir: /api
+    command: ['npm', 'run', 'start']
+    networks:
+      - traefik_web
+
+  # Proxy related stuff
+  # The host machine bridge
+  dockerhost:
+    image: alpine
+    entrypoint: /bin/sh -c "tail -f /dev/null"
+    network_mode: host
+
+  # The proxy for specific services
+  main-nginx:
+    image: nginx:1.13.11-alpine
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - ./nginx/sites-enabled:/etc/nginx/conf.d/sites-enabled
+      - ./nginx/html:/usr/share/nginx/html
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=HostRegexp:halftone.localhost,{subdomain:[a-z]+}.halftone.localhost"
+      - "traefik.frontend.entryPoints=http"
+      - "traefik.docker.network=infrastructure_proxy"
+      - "traefik.frontend.priority=1"
+    links: 
+      - dockerhost:dockerhost
+    networks:
+      - traefik_web
+
+  rethinkdb:
+    image: rethinkdb
+    volumes:
+      - rethinkdb:/data
+
+  verdaccio:
+    image: verdaccio/verdaccio
+    ports:
+      - "4873:4873"
+
+networks:
+  traefik_web:
+    external: true
+
+# Names our volume
+volumes:
+  rethinkdb:
+  dynamodb_data:
+  node-modules-api:
+  node-modules-app:

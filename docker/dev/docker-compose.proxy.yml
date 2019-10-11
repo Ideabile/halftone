@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+
+  # Proxy related stuff
+  # The host machine bridge
+  dockerhost:
+    image: alpine
+    entrypoint: /bin/sh -c "tail -f /dev/null"
+    network_mode: host
+    
+  nginx:
+    image: nginx:1.13.11-alpine
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - ./nginx/sites-enabled-proxy:/etc/nginx/conf.d/sites-enabled
+      - ./nginx/html:/usr/share/nginx/html
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=HostRegexp:halftone.localhost,www.halftone.localhost,api.halftone.localhost"
+      - "traefik.frontend.entryPoints=http"
+      - "traefik.docker.network=infrastructure_proxy"
+      - "traefik.frontend.priority=20"
+    links: 
+      - dockerhost:dockerhost
+    networks:
+      - traefik_web
+
+networks:
+  traefik_web:
+    external: true

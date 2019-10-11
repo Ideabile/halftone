@@ -1,0 +1,29 @@
+@keyframes zoomIn {
+  to {
+    fill-opacity: 1;
+  }
+}
+
+circle {
+  fill-opacity: 0;
+}
+
+circle {
+  animation: zoomIn 2s ease-in-out forwards;
+}
+
+circle:nth-child(4n) {
+  animation-delay: 0s;
+}
+
+circle:nth-child(4n+1) {
+  animation-delay: .5s;
+}
+
+circle:nth-child(4n+3) {
+  animation-delay: 1s;
+}
+
+circle:nth-child(4n+2) {
+  animation-delay: 1.5s;
+}

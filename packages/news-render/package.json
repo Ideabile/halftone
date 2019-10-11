@@ -1,0 +1,28 @@
+{
+  "name": "news-render",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Mauro Mandracchia <mauromandracchia@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/news-render.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "component-halftone-circle": "^0.0.0",
+    "get-pixels": "^3.3.2",
+    "news-providers": "^0.0.0",
+    "scraper": "^0.0.0",
+    "sharp": "^0.22.1",
+    "vue": "^2.6.10",
+    "vue-server-renderer": "^2.6.10"
+  }
+}

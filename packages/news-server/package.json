@@ -1,0 +1,25 @@
+{
+  "name": "news-server",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Mauro Mandracchia <mauromandracchia@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/news-server.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@hapi/hapi": "^18.3.1",
+    "@hapi/inert": "^5.2.1",
+    "dir-to-json": "0.0.3",
+    "hapi": "^18.1.0"
+  }
+}
