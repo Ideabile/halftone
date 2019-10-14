@@ -17,7 +17,7 @@ const defaultOptions = {
     }
 };
 
-module.exports = (images) => images.map(({provider, img, message, link, options }) => new Promise((resolve, reject) => {
+module.exports = (images) => images.map(({provider, img, title, link, options }) => new Promise((resolve, reject) => {
     options = Object.assign({}, defaultOptions, options);
 
     getPixels(img, (err, pixels) => {
@@ -46,7 +46,7 @@ module.exports = (images) => images.map(({provider, img, message, link, options 
                 renderer.renderToString(new Vue(halfTone)).then(html => {
 
                     if (options.type === 'svg') {
-                        resolve({image: html, type: options.type, message, link, provider});
+                        resolve({image: html, type: options.type, title, link, provider});
                         return;
                     }
 
@@ -54,7 +54,7 @@ module.exports = (images) => images.map(({provider, img, message, link, options 
                         sharp(Buffer.from(html))
                             .flatten({ background: options.background }).png()
                             .toBuffer()
-                            .then(data => resolve({image: data, type: options.type, message, link, provider}));
+                            .then(data => resolve({image: data, type: options.type, title, link, provider}));
                     }
 
                 }).catch(reject);

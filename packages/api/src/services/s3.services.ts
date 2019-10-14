@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
 
 @Injectable()
-export class ImageUploadService {
+export class UploadService {
 
     public s3: AWS.S3;
 

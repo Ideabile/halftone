@@ -1,37 +1,40 @@
 <template>
   <div>
     <div class="news__container">
-      <div class="news" v-for="image in news" :key="image.provider">
-        <div class="news__image" :id="`image-${image.image}`">
+      <div class="news__images">
+        <div class="news__image" v-for="image in news" :key="image.provider" :id="`image-${image.image}`">
           <object type="image/svg+xml" crossorigin="anonymous">
           </object>
         </div>
-        <div class="news__content">
-          <h2><span v-for="l in image.title" :key="l">{{ l }}</span></h2>
-          <ul>
-            <li>
-              <a :href="image.link">
-                <svg
-                  aria-hidden="true"
-                  focusable="false"
-                  role="img"
-                  viewBox="0 0 1792 1792"
-                >
-                  <path
-                    fill="currentColor"
-                    d="M1520 1216q0-40-28-68l-208-208q-28-28-68-28-42 0-72 32 3 3 19 18.5t21.5 21.5 15 19 13 25.5 3.5 27.5q0 40-28 68t-68 28q-15 0-27.5-3.5t-25.5-13-19-15-21.5-21.5-18.5-19q-33 31-33 73 0 40 28 68l206 207q27 27 68 27 40 0 68-26l147-146q28-28 28-67zm-703-705q0-40-28-68l-206-207q-28-28-68-28-39 0-68 27l-147 146q-28 28-28 67 0 40 28 68l208 208q27 27 68 27 42 0 72-31-3-3-19-18.5t-21.5-21.5-15-19-13-25.5-3.5-27.5q0-40 28-68t68-28q15 0 27.5 3.5t25.5 13 19 15 21.5 21.5 18.5 19q33-31 33-73zm895 705q0 120-85 203l-147 146q-83 83-203 83-121 0-204-85l-206-207q-83-83-83-203 0-123 88-209l-88-88q-86 88-208 88-120 0-204-84l-208-208q-84-84-84-204t85-203l147-146q83-83 203-83 121 0 204 85l206 207q83 83 83 203 0 123-88 209l88 88q86-88 208-88 120 0 204 84l208 208q84 84 84 204z"
-                  />
-                </svg>
-              </a>
-            </li>
-            <li>
-              <a href="#t-shirt" class="halftone">
-              </a>
-            </li>
-          </ul>
+      </div>
+      <div class="news__titles">
+        <div class="news" v-for="image in news" :key="image.provider" :data-image="`image-${image.image}`">
+          <div class="news__content">
+            <h2><span v-for="l in image.title" :key="l">{{ l }}</span></h2>
+            <ul>
+              <li>
+                <a :href="image.link">
+                  <svg
+                    aria-hidden="true"
+                    focusable="false"
+                    role="img"
+                    viewBox="0 0 1792 1792"
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M1520 1216q0-40-28-68l-208-208q-28-28-68-28-42 0-72 32 3 3 19 18.5t21.5 21.5 15 19 13 25.5 3.5 27.5q0 40-28 68t-68 28q-15 0-27.5-3.5t-25.5-13-19-15-21.5-21.5-18.5-19q-33 31-33 73 0 40 28 68l206 207q27 27 68 27 40 0 68-26l147-146q28-28 28-67zm-703-705q0-40-28-68l-206-207q-28-28-68-28-39 0-68 27l-147 146q-28 28-28 67 0 40 28 68l208 208q27 27 68 27 42 0 72-31-3-3-19-18.5t-21.5-21.5-15-19-13-25.5-3.5-27.5q0-40 28-68t68-28q15 0 27.5 3.5t25.5 13 19 15 21.5 21.5 18.5 19q33-31 33-73zm895 705q0 120-85 203l-147 146q-83 83-203 83-121 0-204-85l-206-207q-83-83-83-203 0-123 88-209l-88-88q-86 88-208 88-120 0-204-84l-208-208q-84-84-84-204t85-203l147-146q83-83 203-83 121 0 204 85l206 207q83 83 83 203 0 123-88 209l88 88q86-88 208-88 120 0 204 84l208 208q84 84 84 204z"
+                    />
+                  </svg>
+                </a>
+              </li>
+              <li>
+                <a href="#t-shirt" class="halftone">
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -55,7 +58,7 @@
       style.textContent = css
 
       this.news.forEach(async (news, index) => {
-        let { data: svg } = await axios.get(`http://s3.halftone.localhost/halftone/${news.image}`)
+        let { data: svg } = await axios.get(`http://s3.halftone.localhost/halftone-images/${news.image}`)
         const host = document.createElement('div')
         host.innerHTML = svg
         svg = host.firstChild
@@ -109,11 +112,28 @@
     animation-delay: 1.2s;
   }
 
-  .news__image {
-    opacity: 0;
+  .news__images {
+    position: absolute;
+    transform: scale(1) translateZ(-1px);
   }
 
-  .news.is-visible .news__image {
+  .news__titles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  .news__image {
+    opacity: 0;
+    position: relative;
+    width: 100vw;
+    min-height: 100vh;
+    margin-bottom: 20vh;
+  }
+
+  .news__image.is-visible {
     animation: fadeIn 2s ease-in-out forwards;
   }
 
@@ -126,19 +146,23 @@
   .news {
     width: 100vw;
     height: 100vh;
-    margin-bottom: 40em;
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: end;
     align-items: flex-end;
     padding: 5% 5% 10% 5%;
     position: relative;
+    margin-top: 2em;
+  }
+
+  .news.is-visible {
+    display: flex;
   }
 
   .news__image object {
     width: 100%;
     position: absolute;
-    transform: scale(.5);
+    transform: scale(.55);
     transform-origin: center center;
     top: 0;
     left: 0;
@@ -236,7 +260,7 @@
 
   ul {
     list-style: none;
-    display: inline-flex;
+    display: block;
     justify-content: center;
     align-content: center;
     background: #fff;

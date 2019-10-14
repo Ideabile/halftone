@@ -19,22 +19,13 @@ export class ArticleService {
     constructor(
         private dynamoDbService: DynamoDbService,
     ) {
-
-        console.log(Article.prototype[DynamoDbSchema]);
-
         this.dynamoDbService.map.ensureTableExists(
             Article,
             {
                 indexOptions: {
-                    ArticleId: {
+                    ArticleDay: {
                         type: 'global',
-                        projection: 'all',
-                        readCapacityUnits: 5,
-                        writeCapacityUnits: 5,
-                    },
-                    ArticleCreateAt: {
-                        type: 'global',
-                        projection: ['createAt'],
+                        projection: ['all'],
                         readCapacityUnits: 5,
                         writeCapacityUnits: 5,
                     },
@@ -47,19 +38,16 @@ export class ArticleService {
     }
 
     getArticles(): QueryIterator<Article> {
-        const createAt = between('2017-02-20T01:58:49.710Z', new Date().toISOString());
-        console.log(createAt);
         return this.dynamoDbService.map.query(Article, {
-            partitionKey: 'createAt',
-            rangeKey: createAt,
-        }, { indexName: 'ArticleId' });
+            day: formatDate(new Date())
+        }, { indexName: 'ArticleDay', projection: ['title', 'image', 'url'] });
     }
 
     @UsePipes(
         new ValidationPipe(),
     )
     async createArticle(article: CreateArticleDto): Promise<Article> {
-        const newArticle = Object.assign(new Article, article, { id: uuid() });
+        const newArticle = Object.assign(new Article, article, { id: uuid(), day: formatDate(new Date()) });
         const savedArticle = await this.dynamoDbService.map.put(newArticle);
         return savedArticle;
     }

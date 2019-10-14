@@ -5,7 +5,6 @@
     </div>
     <div>
       <div v-if="ops">
-        <img alt="" src="ops.svg" />
         I guess we're finished here.
       </div>
       <a v-else :href="yesterday()">Yesterday</a>
@@ -94,12 +93,17 @@
       intersectionObserver() {
         if (this.observer) this.observer.disconnect()
 
-        const $news = this.$el.querySelectorAll('.news')
+        const $news = this.$el.querySelectorAll('.news__image')
 
         const observer = new IntersectionObserver((entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
-              $news.forEach($el => $el.classList.remove('is-visible'))
+              const img = document.querySelector(`[data-image="${entry.target.getAttribute('id')}"]`)
+              const activeTitle = document.querySelector('.news__titles .is-visible')
+              if (activeTitle) {
+                activeTitle.classList.remove('is-visible')
+              }
+              img.classList.add('is-visible')
               entry.target.classList.add('is-visible')
               const obj = entry.target.querySelector('object')
               if (obj.hasAttribute('v-data')) {
@@ -112,7 +116,6 @@
           })
         }, {
           root: null,
-          margin: '0px',
           threshold: 0.3
         })
 

@@ -2,7 +2,7 @@ import { Controller, Get, UsePipes, ValidationPipe, Post, Body, Req, Res, UseInt
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article';
-import { ImageUploadService } from '../../services/s3.services';
+import { UploadService } from '../../services/s3.services';
 import * as uuid from 'uuid/v4';
 import * as fileType from 'file-type';
 
@@ -10,7 +10,7 @@ import * as fileType from 'file-type';
 export class ArticleController {
     constructor(
         private readonly articleService: ArticleService,
-        private readonly imageUploadService: ImageUploadService,
+        private readonly uploadService: UploadService,
     ) { }
 
     @Get()
@@ -43,13 +43,13 @@ export class ArticleController {
         const foundedType = fileType(file.buffer);
         const params = {
             Body: file.buffer,
-            Bucket: 'halftone',
+            Bucket: 'halftone-images',
             Key: uuid(),
             ContentType: foundedType ? foundedType.mime : 'image/svg+xml',
             ACL: 'public-read',
         };
         try {
-            await this.imageUploadService.s3.putObject(params).promise();
+            await this.uploadService.s3.putObject(params).promise();
             res.status(200).json({
                 key: params.Key,
             });

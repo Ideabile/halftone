@@ -75,13 +75,14 @@
   }
 
   .header {
-    padding: 1.2em;
+    padding: .2em .8em;
     display: flex;
     justify-content: space-between;
     font-family: Helvetica, san-serif;
     align-items: center;
     position: fixed;
     background: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
     z-index: 10;
     top: 0;
     left: 0;
@@ -90,6 +91,8 @@
 
   .header a {
     color: #333;
+    font-weight: bold;
+    text-decoration: none;
   }
 
   .header span {
@@ -107,6 +110,8 @@
 
   .logo h1,
   .logo h2 {
+    font-size: 1rem;
+    display: inline-block;
   }
 
   .title, .subtitle {

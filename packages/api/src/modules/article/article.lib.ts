@@ -13,25 +13,20 @@ export class Article {
     @hashKey()
     id: string;
 
-    @rangeKey({
-        type: 'Date',
-        defaultProvider: () => new Date(),
-    })
     @attribute({
         indexKeyConfigurations: {
-            ArticleCreateAt: 'RANGE',
+            ArticleDay: 'HASH',
         },
     })
+    day: string;
+
+    @attribute()
     createAt: Date;
 
     @attribute()
     provider: string;
 
-    @attribute({
-        indexKeyConfigurations: {
-            ArticleId: 'HASH',
-        },
-    })
+    @attribute()
     title: string;
 
     @attribute()

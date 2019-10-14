@@ -51,7 +51,6 @@ scraper(defaultProviders)
 
                 return {
                     ...i,
-                    title: i.message,
                     image: data.key,
                 };
             } catch(e) {
