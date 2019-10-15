@@ -116,6 +116,7 @@
           })
         }, {
           root: null,
+          rootMargin: `-${window.innerHeight / 4}px`,
           threshold: 0.3
         })
 

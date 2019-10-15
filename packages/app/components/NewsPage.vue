@@ -114,7 +114,6 @@
 
   .news__images {
     position: absolute;
-    transform: scale(1) translateZ(-1px);
   }
 
   .news__titles {
@@ -130,7 +129,6 @@
     position: relative;
     width: 100vw;
     min-height: 100vh;
-    margin-bottom: 20vh;
   }
 
   .news__image.is-visible {
